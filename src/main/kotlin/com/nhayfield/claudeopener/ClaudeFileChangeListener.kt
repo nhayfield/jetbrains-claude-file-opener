@@ -24,7 +24,7 @@ private val SOURCE_EXTENSIONS = setOf(
 class ClaudeFileChangeListener : BulkFileListener {
     override fun after(events: List<VFileEvent>) {
         val filesToOpen = events
-            .filter { it.isFromRefresh }
+            .filter { !it.isFromSave }
             .filter { it is VFileContentChangeEvent || it is VFileCreateEvent }
             .mapNotNull { it.file }
             .filter { !it.isDirectory }

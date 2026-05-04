@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.nhayfield"
-version = "1.0.1"
+version = "1.0.3"
 
 repositories {
     mavenCentral()
@@ -27,7 +27,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("241")
-        untilBuild.set("")
+        untilBuild.set("263.*")
     }
 
     signPlugin {
