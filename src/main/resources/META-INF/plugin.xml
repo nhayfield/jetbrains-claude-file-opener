@@ -1,0 +1,31 @@
+<idea-plugin>
+    <id>com.nhayfield.claude-file-opener</id>
+    <name>Claude File Opener</name>
+    <vendor email="nathan.t.hayfield@gmail.com" url="https://github.com/nhayfield">Nathan Hayfield</vendor>
+    <description><![CDATA[
+        Automatically opens files in the editor as Claude Code works on them.<br><br>
+        When Claude Code (Anthropic's AI coding CLI) edits or creates a source file on disk,
+        this plugin detects the change via IntelliJ's Virtual File System and opens the file
+        in the editor — so you can follow along in real time without manually navigating to each file.<br><br>
+        Works with all JetBrains IDEs (IntelliJ IDEA, WebStorm, PyCharm, GoLand, etc.).
+        Only source files within the open project are opened; build artifacts, vendor directories,
+        and <code>.git</code> folders are ignored.
+    ]]></description>
+    <change-notes><![CDATA[
+        <b>1.0.0</b><br>
+        Initial release.
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <applicationListeners>
+        <listener class="com.nhayfield.claudeopener.ClaudeFileChangeListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    </applicationListeners>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Claude File Opener"
+                           displayType="BALLOON"
+                           isLogByDefault="true"/>
+    </extensions>
+</idea-plugin>
