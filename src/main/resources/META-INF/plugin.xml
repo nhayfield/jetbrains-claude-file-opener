@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.nhayfield.claude-file-opener</id>
     <name>Claude File Opener</name>
-    <vendor email="nathan.t.hayfield@gmail.com" url="https://github.com/nhayfield">Nathan Hayfield</vendor>
+    <vendor email="nathan.t.hayfield@gmail.com" url="https://github.com/nhayfield/jetbrains-claude-file-opener">Nathan Hayfield</vendor>
     <description><![CDATA[
         Automatically opens files in the editor as Claude Code works on them.<br><br>
         When Claude Code (Anthropic's AI coding CLI) edits or creates a source file on disk,

@@ -1,3 +1,6 @@
 .gradle/
+.idea/
 build/
 *.class
+private.key
+chain.crt

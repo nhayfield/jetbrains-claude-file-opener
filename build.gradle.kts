@@ -29,4 +29,14 @@ tasks {
         sinceBuild.set("241")
         untilBuild.set("")
     }
+
+    signPlugin {
+        certificateChainFile.set(file("chain.crt"))
+        privateKeyFile.set(file("private.key"))
+        password.set("")
+    }
+
+    publishPlugin {
+        token.set(System.getenv("PUBLISH_TOKEN"))
+    }
 }
