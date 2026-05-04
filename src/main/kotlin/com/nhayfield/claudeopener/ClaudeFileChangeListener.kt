@@ -25,8 +25,13 @@ class ClaudeFileChangeListener : BulkFileListener {
     override fun after(events: List<VFileEvent>) {
         val filesToOpen = events
             .filter { !it.isFromSave }
-            .filter { it is VFileContentChangeEvent || it is VFileCreateEvent }
-            .mapNotNull { it.file }
+            .mapNotNull { event ->
+                when (event) {
+                    is VFileContentChangeEvent -> event.file
+                    is VFileCreateEvent -> event.file ?: event.parent.findChild(event.childName)
+                    else -> null
+                }
+            }
             .filter { !it.isDirectory }
             .filter { EXCLUDED_PATH_SEGMENTS.none { seg -> it.path.contains(seg) } }
             .filter { it.extension in SOURCE_EXTENSIONS }
