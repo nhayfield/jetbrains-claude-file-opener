@@ -15,6 +15,10 @@
         and <code>.git</code> folders are ignored.
     ]]></description>
     <change-notes><![CDATA[
+        <b>1.0.6</b><br>
+        Expanded supported file types to cover C/C++, C#, Swift, Dart, Vue, Svelte, Sass/Less, Groovy, Scala, GraphQL, HCL, Lua, Perl, Elixir, Haskell, Julia, R, and Objective-C.<br>
+        Added support for TOML, Terraform, SQL, and Protobuf file types.<br>
+        Extract <code>openAndNotify</code> helper; exclude <code>/out/</code> build directories.<br>
         <b>1.0.5</b><br>
         Prompt before opening large batches of files (e.g. git branch switches).<br>
         <b>1.0.4</b><br>

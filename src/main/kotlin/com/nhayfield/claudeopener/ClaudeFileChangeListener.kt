@@ -17,13 +17,34 @@ private const val BULK_CHANGE_THRESHOLD = 5
 
 private val EXCLUDED_PATH_SEGMENTS = setOf(
     "/.git/", "/vendor/", "/node_modules/", "/build/", "/target/",
-    "/.idea/", "/__pycache__/", "/dist/", "/coverage/"
+    "/.idea/", "/__pycache__/", "/dist/", "/coverage/", "/out/"
 )
 
 private val SOURCE_EXTENSIONS = setOf(
     "php", "kt", "kts", "java", "js", "ts", "tsx", "jsx",
     "py", "rb", "go", "rs", "xml", "yaml", "yml", "json",
-    "html", "css", "scss", "sh", "bash", "md", "gradle"
+    "html", "css", "scss", "sh", "bash", "md", "gradle",
+    "toml", "tf", "sql", "proto",
+    // C/C++
+    "c", "cpp", "cc", "cxx", "h", "hpp",
+    // C#, Swift, Dart
+    "cs", "swift", "dart",
+    // Frontend frameworks
+    "vue", "svelte",
+    // CSS preprocessors
+    "less", "sass",
+    // JVM/Groovy/Scala
+    "groovy", "scala",
+    // GraphQL
+    "graphql", "gql",
+    // Config/infrastructure
+    "hcl", "properties",
+    // Scripting
+    "lua", "pl", "pm",
+    // Functional/niche
+    "ex", "exs", "hs", "jl", "r",
+    // Objective-C
+    "m", "mm"
 )
 
 class ClaudeFileChangeListener : BulkFileListener {
@@ -58,16 +79,20 @@ class ClaudeFileChangeListener : BulkFileListener {
                     for (project in openProjects) {
                         val basePath = project.basePath ?: continue
                         if (vFile.path.startsWith(basePath)) {
-                            FileEditorManager.getInstance(project).openFile(vFile, false)
-                            NotificationGroupManager.getInstance()
-                                .getNotificationGroup("Claude File Opener")
-                                .createNotification("Opened: ${vFile.name}", NotificationType.INFORMATION)
-                                .notify(project)
+                            openAndNotify(project, vFile)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun openAndNotify(project: Project, vFile: VirtualFile) {
+        FileEditorManager.getInstance(project).openFile(vFile, false)
+        NotificationGroupManager.getInstance()
+            .getNotificationGroup("Claude File Opener")
+            .createNotification("Opened: ${vFile.name}", NotificationType.INFORMATION)
+            .notify(project)
     }
 
     private fun promptBulkOpen(project: Project, files: List<VirtualFile>) {
