@@ -1,14 +1,19 @@
 package com.nhayfield.claudeopener
 
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+
+private const val BULK_CHANGE_THRESHOLD = 5
 
 private val EXCLUDED_PATH_SEGMENTS = setOf(
     "/.git/", "/vendor/", "/node_modules/", "/build/", "/target/",
@@ -42,18 +47,41 @@ class ClaudeFileChangeListener : BulkFileListener {
             val openProjects = ProjectManager.getInstance().openProjects
                 .filter { !it.isDisposed }
 
-            for (vFile in filesToOpen) {
+            if (filesToOpen.size > BULK_CHANGE_THRESHOLD) {
                 for (project in openProjects) {
-                    val basePath = project.basePath ?: continue
-                    if (vFile.path.startsWith(basePath)) {
-                        FileEditorManager.getInstance(project).openFile(vFile, false)
-                        NotificationGroupManager.getInstance()
-                            .getNotificationGroup("Claude File Opener")
-                            .createNotification("Opened: ${vFile.name}", NotificationType.INFORMATION)
-                            .notify(project)
+                    val projectFiles = filesToOpen.filter { it.path.startsWith(project.basePath ?: return@filter false) }
+                    if (projectFiles.isEmpty()) continue
+                    promptBulkOpen(project, projectFiles)
+                }
+            } else {
+                for (vFile in filesToOpen) {
+                    for (project in openProjects) {
+                        val basePath = project.basePath ?: continue
+                        if (vFile.path.startsWith(basePath)) {
+                            FileEditorManager.getInstance(project).openFile(vFile, false)
+                            NotificationGroupManager.getInstance()
+                                .getNotificationGroup("Claude File Opener")
+                                .createNotification("Opened: ${vFile.name}", NotificationType.INFORMATION)
+                                .notify(project)
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun promptBulkOpen(project: Project, files: List<VirtualFile>) {
+        val notification = NotificationGroupManager.getInstance()
+            .getNotificationGroup("Claude File Opener")
+            .createNotification(
+                "${files.size} files changed — open all?",
+                NotificationType.INFORMATION
+            )
+        notification.addAction(NotificationAction.createSimple("Open All") {
+            notification.expire()
+            val fem = FileEditorManager.getInstance(project)
+            files.forEach { fem.openFile(it, false) }
+        })
+        notification.notify(project)
     }
 }

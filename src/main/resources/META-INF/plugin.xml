@@ -15,6 +15,8 @@
         and <code>.git</code> folders are ignored.
     ]]></description>
     <change-notes><![CDATA[
+        <b>1.0.5</b><br>
+        Prompt before opening large batches of files (e.g. git branch switches).<br>
         <b>1.0.4</b><br>
         Fix newly created files not opening.<br>
         <b>1.0.3</b><br>
